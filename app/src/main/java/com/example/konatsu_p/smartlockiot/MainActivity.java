@@ -16,6 +16,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import java.util.Set;
 
+import static android.support.constraint.Constraints.TAG;
+
 public class MainActivity extends AppCompatActivity {
     Boolean isLock = true;
     TextView textView;
@@ -88,11 +90,13 @@ public class MainActivity extends AppCompatActivity {
     public void onA() {
         String text = "a";
         mConnection.send(text.getBytes());
+        Log.i(TAG, "value=" + "onA");
     }
 
 
     public void offA() {
         String text = "b";
         mConnection.send(text.getBytes());
+        Log.i(TAG, "value=" + "offA");
     }
 }
