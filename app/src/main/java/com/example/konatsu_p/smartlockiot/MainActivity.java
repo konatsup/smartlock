@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +48,15 @@ public class MainActivity extends AppCompatActivity {
             public void onCancelled(final DatabaseError databaseError) {
             }
         });
+
+    }
+
+    public void switchIsLocked(View v){
+        isLock = !isLock;
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference userRef = database.getReference("DEVICE_ID").child("Status");
+
+        userRef.setValue(isLock);
 
     }
 
