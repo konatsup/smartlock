@@ -46,31 +46,29 @@ public class BluetoothConnection extends Thread {
                         bytesRead = mInputStream.read(buffer);
                         final String readMsg = new String(buffer, 0, bytesRead);
                         String message = readMsg.trim();
-
+                        Log.i(TAG, "readMsg.trim0 value=" + message);
                         if (message != null && !message.equals("")) {
-
                             Log.i(TAG, "readMsg.trim value=" + message);
                             String[] splitMsgs = message.split(":", 0);
-
+                            Log.i(TAG, "readMsg.trim1 value=" + splitMsgs[1]);
                             if (splitMsgs[1].equals("fin")){
                                 // NFCの登録が成功したことを通知
                                 Log.d(TAG, "value= カードの登録が完了しました");
                                 Thread.sleep(5000);
                                 mSendThread.interrupt();
-
-                            }
-
-                            switch (splitMsgs[1]) {
-                                case "e":
-                                    // Lock処理が完了した場合
-                                    Log.d(TAG, "ロックしました");
-                                    break;
-                                case "f":
-                                    // Unlock処理が完了した場合
-                                    Log.d(TAG, "アンロックしました");
-                                    break;
-                                default:
-                                    break;
+                            }else {
+                                switch (message) {
+                                    case "ON":
+                                        // Lock処理が完了した場合
+                                        Log.d(TAG, "value=ロックしました");
+                                        break;
+                                    case "f":
+                                        // Unlock処理が完了した場合
+                                        Log.d(TAG, "value=アンロックしました");
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
 
                         } else {
