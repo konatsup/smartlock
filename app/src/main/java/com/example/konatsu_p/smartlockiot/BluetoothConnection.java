@@ -108,13 +108,23 @@ public class BluetoothConnection extends Thread {
         }
     }
 
-    public void send(byte sendData[]) {
-        if (!mState.equals(State.CONNECTED)) return;
-        try {
-            mOutputStream.write(sendData);
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void send(final byte sendData[]) {
+        if (mOutputStream == null) {
+            return;
         }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Log.d(TAG, "sendData value=" + sendData);
+                    mOutputStream.write(sendData);
+                } catch (Exception e) {
+                    Log.d(TAG, "error sendData value=");
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     private void disconnectDevice() {
