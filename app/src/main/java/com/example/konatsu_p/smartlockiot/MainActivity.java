@@ -25,6 +25,7 @@ import static android.support.constraint.Constraints.TAG;
 
 public class MainActivity extends AppCompatActivity {
     Boolean isLock = true;
+    Boolean initFlg = true;
     TextView textView;
     BluetoothConnection mConnection;
 
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
                     offA();
                 }
                 textView.setText(isLock.toString());
+                initFlg = false;
             }
 
             @Override
@@ -92,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onA() {
+        postTimestamp();
         String text = "a";
         mConnection.send(text.getBytes());
         Log.i(TAG, "value=" + "onA");
@@ -99,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void offA() {
+        postTimestamp();
         String text = "b";
         mConnection.send(text.getBytes());
         Log.i(TAG, "value=" + "offA");
@@ -110,7 +114,9 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "value=" + "receiveCardInfo");
     }
 
-    public void postTimestamp(View v) {
+    public void postTimestamp() {
+        if (initFlg) return;
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference timestampRef = database.getReference("DEVICE_ID").child("Timestamp");
 
