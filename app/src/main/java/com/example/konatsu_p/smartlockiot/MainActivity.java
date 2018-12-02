@@ -1,5 +1,6 @@
 package com.example.konatsu_p.smartlockiot;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Set;
 
 import static android.support.constraint.Constraints.TAG;
@@ -81,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
             mConnection = new BluetoothConnection(selected);
             mConnection.start();
 
-
         } else {
             Toast.makeText(getApplicationContext(), "端末がありません", Toast.LENGTH_SHORT).show();
         }
@@ -110,9 +114,12 @@ public class MainActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference timestampRef = database.getReference("DEVICE_ID").child("Timestamp");
 
+        @SuppressLint("SimpleDateFormat") final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        final Date date = new Date(System.currentTimeMillis());
         Timestamp timestamp = new Timestamp();
-        timestamp.setDatetime("2001-03-10_17:16:18");
-        timestamp.setUserName("konatsu_p");
+
+        timestamp.setDatetime(df.format(date));
+        timestamp.setUserName("owner");
         timestamp.setLocked(isLock);
 
         timestampRef.push().setValue(timestamp);
