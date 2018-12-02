@@ -32,8 +32,9 @@ public class BluetoothConnection extends Thread {
             @Override
             public void run() {
                 try {
-                    mSocket = mDevice.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805f9b34fb"));
-                    mSocket.connect();
+                    BluetoothSocket socket = mDevice.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805f9b34fb"));
+                    socket.connect();
+                    mSocket = socket;
                     mInputStream = mSocket.getInputStream();
                     mOutputStream = mSocket.getOutputStream();
 
