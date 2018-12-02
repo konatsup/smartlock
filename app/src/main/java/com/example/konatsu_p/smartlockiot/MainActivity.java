@@ -100,6 +100,12 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "value=" + "offA");
     }
 
+    public void receiveCardInfo(View v) {
+        String text = "c";
+        mConnection.startSendThread(text.getBytes());
+        Log.i(TAG, "value=" + "receiveCardInfo");
+    }
+
     public void postTimestamp(View v) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference timestampRef = database.getReference("DEVICE_ID").child("Timestamp");

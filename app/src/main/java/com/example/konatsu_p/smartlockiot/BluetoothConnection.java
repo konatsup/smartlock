@@ -18,6 +18,7 @@ public class BluetoothConnection extends Thread {
     private InputStream mInputStream;
     private OutputStream mOutputStream;
     private boolean mIsRunning;
+    private Thread mSendThread;
 
     private enum State {CONNECT, CONNECTED, DISCONNECT}
 
@@ -44,11 +45,33 @@ public class BluetoothConnection extends Thread {
                     while (mIsRunning) {
                         bytesRead = mInputStream.read(buffer);
                         final String readMsg = new String(buffer, 0, bytesRead);
-                        if (readMsg.trim() != null && !readMsg.trim().equals("")) {
-                            Log.i(TAG, "value=" + readMsg.trim());
+                        String message = readMsg.trim();
 
-                            String crlf = System.getProperty("line.separator");
-                            text = text + readMsg.trim() + crlf;
+                        if (message != null && !message.equals("")) {
+
+                            Log.i(TAG, "readMsg.trim value=" + message);
+                            String[] splitMsgs = message.split(":", 0);
+
+                            if (splitMsgs[1].equals("fin")){
+                                // NFCの登録が成功したことを通知
+                                Log.d(TAG, "value= カードの登録が完了しました");
+                                Thread.sleep(5000);
+                                mSendThread.interrupt();
+
+                            }
+
+                            switch (splitMsgs[1]) {
+                                case "e":
+                                    // Lock処理が完了した場合
+                                    Log.d(TAG, "ロックしました");
+                                    break;
+                                case "f":
+                                    // Unlock処理が完了した場合
+                                    Log.d(TAG, "アンロックしました");
+                                    break;
+                                default:
+                                    break;
+                            }
 
                         } else {
                             Log.i(TAG, "value=nodata");
@@ -118,14 +141,36 @@ public class BluetoothConnection extends Thread {
             @Override
             public void run() {
                 try {
-                    Log.d(TAG, "sendData value=" + sendData);
-                    mOutputStream.write(sendData);
+                        Log.d(TAG, "sendData value=" + sendData);
+                        mOutputStream.write(sendData);
                 } catch (Exception e) {
                     Log.d(TAG, "error sendData value=");
                     e.printStackTrace();
                 }
             }
         }).start();
+    }
+
+    public void startSendThread(final byte sendData[]) {
+        if (mOutputStream == null) {
+            return;
+        }
+
+        mSendThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while (true) {
+                        Log.d(TAG, "sendData value=c");
+                        mOutputStream.write(sendData);
+                    }
+                } catch (Exception e) {
+                    Log.d(TAG, "error sendData value=c");
+                    e.printStackTrace();
+                }
+            }
+        });
+        mSendThread.start();
     }
 
     private void disconnectDevice() {
